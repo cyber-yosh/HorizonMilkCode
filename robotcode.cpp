@@ -67,6 +67,7 @@ void clamp(){
   }
 }
 
+//these revolution values need to be altered, please CHANGE THEM TO BE THE RIGHT VALUE, it will be easier and more precise in the long run.
 void dummyLobster(){
   LobsterBot.spinFor(directionType::rev, 50, rev);
 }
