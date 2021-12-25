@@ -30,6 +30,8 @@ using namespace vex;
 
 bool reversedrive=false;
 bool intakereverse=false;
+bool lobsterset=false;
+bool intaketoggle=false;
 
 void reversedir() {
   if (reversedrive==false){
@@ -39,13 +41,16 @@ void reversedir() {
     reversedrive=false;
   }
 }
-void lobsterDown() {
-  LobsterBot.spinToPosition(90, deg);
-}
 
 void lobsterGoal() {
-  LobsterBot.spinToPosition(35, deg);
-
+  if (lobsterset=true) {
+    LobsterBot.spinToPosition(315, deg);
+    lobsterset=false;
+  }
+  else {
+    LobsterBot.spinToPosition(0, deg);
+    lobsterset=true;
+  }
 }
 
 
@@ -64,6 +69,15 @@ void clamp(){
   }
   else {
     pClamp.set(true);
+  }
+}
+
+void intakeonoff() {
+  if (intaketoggle==false){
+    intaketoggle=true;
+  } 
+  else {
+    intaketoggle=false;
   }
 }
 
@@ -86,13 +100,18 @@ int main() {
     Controller1.ButtonA.pressed(reversedir);
     Controller1.ButtonX.pressed(reversein);
     Controller1.ButtonY.pressed(clamp);
+    Controller1.ButtonB.pressed(intakeonoff);
 
 
-    if (intakereverse==false){
-      intakeMotor.spin(directionType::fwd, Controller1.Axis3.value()*100.0, velocityUnits::pct);
-    }
-    else {
-      intakeMotor.spin(directionType::rev, Controller1.Axis3.value()*100.0, velocityUnits::pct);
+    if (intaketoggle==true){
+
+      if (intakereverse==false){
+        intake.spin(directionType::fwd, 100.0, velocityUnits::pct);
+      }
+
+      if (intakereverse==true) {
+        intake.spin(directionType::rev, 100.0, velocityUnits::pct);
+      }
     }
     
     fourbar.spin(directionType::rev, (Controller1.Axis2.value()), velocityUnits::pct);
@@ -101,17 +120,18 @@ int main() {
     if (reversedrive==false){
       LeftDriveMotor1.spin(directionType::rev, (Controller1.Axis3.value() - Controller1.Axis4.value()), velocityUnits::pct);
       LeftDriveMotor2.spin(directionType::rev, (Controller1.Axis3.value() - Controller1.Axis4.value()), velocityUnits::pct);
-      RightDriveMotor1.spin(directionType::fwd,(Controller1.Axis3.value() + Controller1.Axis4.value()), velocityUnits::pct);      
-      RightDriveMotor2.spin(directionType::fwd,(Controller1.Axis3.value() + Controller1.Axis4.value()), velocityUnits::pct);
+      RightDriveMotor1.spin(directionType::fwd, (Controller1.Axis3.value() + Controller1.Axis4.value()), velocityUnits::pct);      
+      RightDriveMotor2.spin(directionType::fwd, (Controller1.Axis3.value() + Controller1.Axis4.value()), velocityUnits::pct);
     }
     if (reversedrive==true){
       LeftDriveMotor1.spin(directionType::fwd, (Controller1.Axis3.value() - Controller1.Axis4.value()), velocityUnits::pct);
       LeftDriveMotor2.spin(directionType::fwd, (Controller1.Axis3.value() - Controller1.Axis4.value()), velocityUnits::pct);
-      RightDriveMotor1.spin(directionType::rev,(Controller1.Axis3.value() + Controller1.Axis4.value()), velocityUnits::pct);      
-      RightDriveMotor2.spin(directionType::rev,(Controller1.Axis3.value() + Controller1.Axis4.value()), velocityUnits::pct);
+      RightDriveMotor1.spin(directionType::rev, (Controller1.Axis3.value() + Controller1.Axis4.value()), velocityUnits::pct);      
+      RightDriveMotor2.spin(directionType::rev, (Controller1.Axis3.value() + Controller1.Axis4.value()), velocityUnits::pct);
     }
     Controller1.ButtonR2.pressed(dummyLobster);
     Controller1.ButtonR1.pressed(dummyLobster2); 
+    Controller1.ButtonL1.pressed(lobstergoal);
   }
 }
   
