@@ -18,7 +18,7 @@
 // RightDriveMotor1     motor         15              
 // RightDriveMotor2     motor         16              
 // intakeMotor          motor         10              
-// LobsterBot           motor         4               
+// LobsterBot           motor         11              
 // pClamp               digital_out   A               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
@@ -40,12 +40,13 @@ void reversedir() {
   }
 }
 void lobsterDown() {
-  LobsterBot.spinToPosition(90, deg);
+  LobsterBot.spinToPosition(1500,deg);
+  LobsterBot.stop(brakeType::hold);
 }
 
 void lobsterGoal() {
-  LobsterBot.spinToPosition(35, deg);
-
+  LobsterBot.spinToPosition(950, deg);
+  LobsterBot.stop(brakeType::hold);
 }
 
 
@@ -67,13 +68,18 @@ void clamp(){
   }
 }
 
-//these revolution values need to be altered, please CHANGE THEM TO BE THE RIGHT VALUE, it will be easier and more precise in the long run.
-void dummyLobster(){
-  LobsterBot.spinFor(directionType::rev, 50, rev);
+void lobsterCal(){
+  LobsterBot.spin(directionType::rev, 100.0, velocityUnits::pct);
+}
+void lobsterStop() {
+  LobsterBot.stop(brakeType::hold);
 }
 
-void dummyLobster2(){
-  LobsterBot.spinFor(directionType::fwd, 50, rev);
+
+
+void lobsterCal2(){
+  LobsterBot.spin(directionType::fwd, 100.0, velocityUnits::pct);
+
 }
 
 int main() {
@@ -95,8 +101,14 @@ int main() {
       intakeMotor.spin(directionType::rev, Controller1.Axis3.value()*100.0, velocityUnits::pct);
     }
     
-    fourbar.spin(directionType::rev, (Controller1.Axis2.value()), velocityUnits::pct);
-    fourbar2.spin(directionType::fwd, (Controller1.Axis2.value()), velocityUnits::pct);
+    fourbar.spin(directionType::rev, (Controller1.Axis2.value())/2, velocityUnits::pct);
+
+    fourbar2.spin(directionType::fwd, (Controller1.Axis2.value())/2, velocityUnits::pct);
+
+    if (Controller1.Axis2.value() == 0){
+      fourbar.stop(brakeType::hold);
+      fourbar.stop(brakeType::hold);
+    }
 
     if (reversedrive==false){
       LeftDriveMotor1.spin(directionType::rev, (Controller1.Axis3.value() - Controller1.Axis4.value()), velocityUnits::pct);
@@ -110,8 +122,15 @@ int main() {
       RightDriveMotor1.spin(directionType::rev,(Controller1.Axis3.value() + Controller1.Axis4.value()), velocityUnits::pct);      
       RightDriveMotor2.spin(directionType::rev,(Controller1.Axis3.value() + Controller1.Axis4.value()), velocityUnits::pct);
     }
-    Controller1.ButtonR2.pressed(dummyLobster);
-    Controller1.ButtonR1.pressed(dummyLobster2); 
+    Controller1.ButtonR2.pressed(lobsterDown);
+    Controller1.ButtonR1.pressed(lobsterGoal);
+    Controller1.ButtonUp.pressed(lobsterCal);
+    Controller1.ButtonUp.released(lobsterStop);
+    Controller1.ButtonDown.pressed(lobsterCal2);
+    Controller1.ButtonDown.released(lobsterStop);
+
+    
+
   }
 }
   
